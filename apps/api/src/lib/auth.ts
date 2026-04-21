@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../config/env.js";
 
 export function hashPassword(password: string) {
@@ -12,7 +12,7 @@ export function comparePassword(password: string, hashedPassword: string) {
 
 export function signToken(userId: string) {
   return jwt.sign({ sub: userId }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN
+    expiresIn: env.JWT_EXPIRES_IN as SignOptions["expiresIn"]
   });
 }
 

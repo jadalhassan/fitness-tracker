@@ -10,8 +10,9 @@
     "dev:mobile": "npm --workspace @athletica/mobile run start",
     "dev:api": "npm --workspace @athletica/api run dev",
     "start:api": "npm --workspace @athletica/api run start",
-    "build:api": "npm run build --workspace @athletica/api",
-    "build": "npm run build --workspaces --if-present",
+    "build:shared": "npm run build --workspace @athletica/shared",
+    "build:api": "npm run build:shared && npm run build --workspace @athletica/api",
+    "build": "npm run build:api",
     "lint": "npm run lint --workspaces --if-present",
     "seed": "npm --workspace @athletica/api run seed"
   },

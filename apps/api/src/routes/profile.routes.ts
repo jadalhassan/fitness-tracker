@@ -1,4 +1,5 @@
 import { Router } from "express";
+import type { Discipline, FitnessLevel } from "@athletica/shared";
 import { z } from "zod";
 import { asyncHandler } from "../lib/async-handler.js";
 import { ApiError } from "../lib/api-error.js";
@@ -7,6 +8,25 @@ import { requireAuth } from "../middleware/auth.js";
 import { validateBody } from "../middleware/validate.js";
 import { UserModel } from "../models/User.js";
 import { suggestStarterPlan } from "../services/plan.service.js";
+
+const disciplineSchema = z.enum([
+  "gym",
+  "bodybuilding",
+  "powerlifting",
+  "calisthenics",
+  "running",
+  "walking",
+  "mma",
+  "boxing",
+  "kickboxing",
+  "wrestling",
+  "bjj",
+  "hiit",
+  "home-workout",
+  "stretching",
+  "mobility",
+  "recovery"
+]);
 
 const profileUpdateSchema = z.object({
   fullName: z.string().min(2).optional(),
@@ -27,7 +47,7 @@ const profileUpdateSchema = z.object({
       weightKg: z.number().min(35).max(250).optional(),
       weeklyFrequency: z.number().min(1).max(14).optional(),
       fitnessLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-      preferredDisciplines: z.array(z.string()).optional(),
+      preferredDisciplines: z.array(disciplineSchema).optional(),
       equipmentAvailability: z.array(z.string()).optional(),
       avatarUrl: z.string().url().optional()
     })
@@ -51,8 +71,8 @@ profileRouter.get(
       data: {
         ...serialize(user),
         suggestedPlan: suggestStarterPlan(
-          user.profile.preferredDisciplines,
-          user.profile.fitnessLevel
+          user.profile.preferredDisciplines as Discipline[],
+          user.profile.fitnessLevel as FitnessLevel
         )
       }
     });
@@ -75,7 +95,7 @@ profileRouter.put(
     }
 
     if (payload.goals) {
-      user.goals = payload.goals;
+      user.set("goals", payload.goals);
     }
 
     if (payload.profile) {
