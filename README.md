@@ -115,6 +115,96 @@ npm run dev:mobile
 
 Then launch iOS or Android from Expo.
 
+## Deployment
+
+### API deployment on Railway
+
+The repo now includes a Docker-based Railway config for the API:
+
+- `railway.json`
+- `apps/api/Dockerfile`
+- `.dockerignore`
+
+Recommended setup:
+
+1. Create a Railway service from this repository.
+2. Keep the service rooted at the repository root so the Docker build can access the shared workspace package.
+3. Railway will use `railway.json` and `apps/api/Dockerfile` to build the API.
+4. Set these Railway variables:
+
+```text
+NODE_ENV=production
+PORT=4000
+API_PREFIX=/api/v1
+CLIENT_ORIGIN=*
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=your-long-random-secret
+JWT_EXPIRES_IN=7d
+```
+
+5. Use MongoDB Atlas for production and point `MONGO_URI` at your Atlas connection string.
+
+The healthcheck is configured for:
+
+```text
+/api/v1/health
+```
+
+### Mobile release builds with Expo EAS
+
+Per Expo's monorepo guidance, run EAS commands from the mobile app directory, not from the monorepo root:
+
+```bash
+cd apps/mobile
+```
+
+The mobile app now includes:
+
+- `app.config.ts` for environment-driven Expo config
+- `eas.json` with `development`, `preview`, and `production` build profiles
+- `src/config/env.ts` to centralize API URL resolution
+
+Before your first build, define these values in EAS environment variables or a local `.env` file:
+
+```text
+EXPO_PUBLIC_API_URL=https://your-api.up.railway.app/api/v1
+EXPO_IOS_BUNDLE_IDENTIFIER=com.athletica.mobile
+EXPO_ANDROID_PACKAGE=com.athletica.mobile
+EXPO_APP_VERSION=1.0.0
+EXPO_APP_NAME=Athletica
+EXPO_APP_SLUG=athletica-fitness-tracker
+EXPO_APP_SCHEME=athletica
+```
+
+Optional after linking the app to an Expo project:
+
+```text
+EXPO_EAS_PROJECT_ID=your-expo-project-id
+```
+
+Typical release flow:
+
+```bash
+cd apps/mobile
+npm install -g eas-cli
+eas login
+eas build --platform android --profile production
+eas build --platform ios --profile production
+eas submit --platform android
+eas submit --platform ios
+```
+
+For internal QA builds:
+
+```bash
+eas build --platform android --profile preview
+eas build --platform ios --profile preview
+```
+
+### Over-the-air updates later
+
+If you want OTA updates after the first store release, add `expo-updates` and run Expo's update configuration flow from `apps/mobile`. That is intentionally left out for now so the initial release setup stays smaller and easier to verify.
+
 ## Key Environment Variables
 
 ### API
@@ -129,6 +219,13 @@ Then launch iOS or Android from Expo.
 ### Mobile
 
 - `EXPO_PUBLIC_API_URL`
+- `EXPO_IOS_BUNDLE_IDENTIFIER`
+- `EXPO_ANDROID_PACKAGE`
+- `EXPO_APP_VERSION`
+- `EXPO_APP_NAME`
+- `EXPO_APP_SLUG`
+- `EXPO_APP_SCHEME`
+- `EXPO_EAS_PROJECT_ID` (optional until the app is linked to Expo)
 
 ## Known Limitations
 

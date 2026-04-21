@@ -1,10 +1,9 @@
 import axios from "axios";
+import { env } from "../config/env";
 import { useAuthStore } from "../store/auth-store";
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
-
 export const apiClient = axios.create({
-  baseURL: apiUrl,
+  baseURL: env.apiUrl,
   timeout: 10000
 });
 
