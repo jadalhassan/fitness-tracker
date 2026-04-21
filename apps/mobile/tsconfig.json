@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["react", "react-native"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@athletica/shared/*": ["../../packages/shared/src/*"]
+    }
+  },
+  "include": ["App.tsx", "src"]
+}

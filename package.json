@@ -1,0 +1,19 @@
+{
+  "name": "fitness-tracker",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:mobile": "npm --workspace @athletica/mobile run start",
+    "dev:api": "npm --workspace @athletica/api run dev",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "seed": "npm --workspace @athletica/api run seed"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
