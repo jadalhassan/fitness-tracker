@@ -10,6 +10,7 @@ const config: ExpoConfig = {
   version: process.env.EXPO_APP_VERSION ?? "1.0.0",
   orientation: "portrait",
   userInterfaceStyle: "dark",
+  plugins: ["expo-font"],
   splash: {
     backgroundColor: "#06070A"
   },
